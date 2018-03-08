@@ -1,8 +1,5 @@
-# Domain Relational Calculus query model safety check using Alloy Analyzer
+# Analyzing Relational Calculus Queries Using Alloy Tools
 
-This project provides a tool as an Alloy library to analyze the safety of
-Domain Relational Calculus (DRC) query model. A query is considered safe if
-the result of the query is always consistent regardless of what is the domain
-of database entries.
+For now, please refer to [`master-project/`](master-project/) for the exploration of how Alloy tools are used to verify the safety of Domain Relational Calculus queries.
 
 More updates coming soon.
