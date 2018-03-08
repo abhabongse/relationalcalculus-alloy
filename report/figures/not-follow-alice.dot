@@ -1,0 +1,27 @@
+/*
+Border Colors: https://coolors.co/e58f94-b0fe76-f4f1bb-fac05e-3a405a
+Fill Colors:   https://coolors.co/e9a3a7-befe8e-f6f3c7-facb7b-5d6278
+Arrow Colors:  https://coolors.co/48466f-bf1363-065143-f39237-fbfef9
+    Element / Follows / Output
+*/
+digraph "graph" {
+graph [fontsize=12]
+node [fontsize=12]
+edge [fontsize=12]
+rankdir=TB;
+"N6" -> "N4" [color = "#48466f", fontname="Helvetica", fontcolor = "#48466f", style = "dotted", label = "Element", dir = "forward", weight = "1"]
+"N6" -> "N2" [color = "#48466f", fontname="Helvetica", fontcolor = "#48466f", style = "dotted", label = "Element", dir = "forward", weight = "1"]
+"N6" -> "N1" [color = "#48466f", fontname="Helvetica", fontcolor = "#48466f", style = "dotted", label = "Element", dir = "forward", weight = "1"]
+"N3" -> "N2" [color = "#48466f", fontname="Helvetica", fontcolor = "#48466f", style = "dotted", label = "Element", dir = "forward", weight = "1"]
+"N3" -> "N1" [color = "#48466f", fontname="Helvetica", fontcolor = "#48466f", style = "dotted", label = "Element", dir = "forward", weight = "1"]
+"N2" -> "N1" [color = "#bf1363", fontname="Helvetica", fontcolor = "#bf1363", style = "solid", label = "Follows", dir = "forward", weight = "1"]
+"N1" -> "N1" [color = "#bf1363", fontname="Helvetica", fontcolor = "#bf1363", style = "solid", label = "Follows", dir = "forward", weight = "1"]
+"N5" -> "N4" [color = "#065143", fontname="Helvetica", fontcolor = "#065143", style = "dashed", label = "Output", dir = "forward", weight = "1"]
+"N0" [label="ResultBeta", color = "#b0fe76", fillcolor="#befe8e",fontname="Helvetica", fontcolor = "#000000", shape = "parallelogram", style = "filled, solid"]
+"N1" [label="Superparticle2\n(Alice)", color = "#fac05e", fillcolor="#facb7b",fontname="Helvetica", fontcolor = "#000000", shape = "box", style = "filled, solid"]
+"N2" [label="Superparticle1", color = "#fac05e", fillcolor="#facb7b",fontname="Helvetica", fontcolor = "#000000", shape = "box", style = "filled, solid"]
+"N3" [label="UniverseBeta", color = "#b0fe76", fillcolor="#befe8e",fontname="Helvetica", fontcolor = "#000000", shape = "trapezium", style = "filled, solid"]
+"N4" [label="Superparticle0", color = "#f4f1bb", fillcolor="#f6f3c7",fontname="Helvetica", fontcolor = "#000000", shape = "box", style = "filled, solid"]
+"N5" [label="ResultAlpha", color = "#e58f94", fillcolor="#e9a3a7",fontname="Helvetica", fontcolor = "#000000", shape = "parallelogram", style = "filled, solid"]
+"N6" [label="UniverseAlpha", color = "#e58f94", fillcolor="#e9a3a7",fontname="Helvetica", fontcolor = "#000000", shape = "trapezium", style = "filled, solid"]
+}

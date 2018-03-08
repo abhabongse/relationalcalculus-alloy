@@ -1,0 +1,265 @@
+<?xml version="1.0"?>
+<!DOCTYPE ipe SYSTEM "ipe.dtd">
+<ipe version="70000" creator="pdftoipe 2014/03/03">
+<ipestyle>
+<layout paper="675 214" frame="675 214" origin="0 0"/>
+<symbol name="bullet"><path matrix="0.04 0 0 0.04 0 0" fill="black">
+18 0 0 18 0 0 e</path></symbol>
+</ipestyle>
+<!-- Page: 1 1 -->
+<page>
+<path fill="0.914062 0.638672 0.654297" fillrule="wind">
+303.77 210 m
+206.06 210 l
+171.26 174 l
+338.56 174 l
+</path>
+<path stroke="0.898438 0.560547 0.580063" pen="1">
+303.77 210 m
+206.06 210 l
+171.26 174 l
+338.56 174 l
+303.77 210 l
+h
+</path>
+<text stroke="0 0 0" pos="0 0" transformations="affine" valign="baseline" size="12" matrix="1 0 0 1 214.91 188.9">UniverseAlpha</text>
+<path fill="0.964844 0.953125 0.78125" fillrule="wind">
+69.4102 89 m
+164.41 89 l
+164.41 125 l
+69.4102 125 l
+69.4102 89 l
+h
+</path>
+<path stroke="0.957016 0.945312 0.732422" pen="1">
+69.4102 89 m
+164.41 89 l
+164.41 125 l
+69.4102 125 l
+69.4102 89 l
+h
+</path>
+<text stroke="0 0 0" pos="0 0" transformations="affine" valign="baseline" size="12" matrix="1 0 0 1 77.4102 103.9">Superparticle0</text>
+<path stroke="0.282471 0.274399 0.435303" pen="1" dash="[1 6] 0">
+223.29 173.93 m
+213.19 168.35 202.01 162.03 191.91 156 c
+178.43 147.95 163.84 138.73 151.15 130.54 c
+</path>
+<path fill="0.282471 0.274399 0.435303" fillrule="wind">
+152.99 127.57 m
+142.7 125.06 l
+149.18 133.44 l
+</path>
+<path stroke="0.282471 0.274399 0.435303" pen="1">
+152.99 127.57 m
+142.7 125.06 l
+149.18 133.44 l
+152.99 127.57 l
+h
+</path>
+<text stroke="0.282471 0.274399 0.435303" pos="0 0" transformations="affine" valign="baseline" size="12" matrix="1 0 0 1 191.91 146.4">Element</text>
+<path fill="0.980469 0.796875 0.482422" fillrule="wind">
+314.41 89 m
+409.41 89 l
+409.41 125 l
+314.41 125 l
+314.41 89 l
+h
+</path>
+<path stroke="0.980469 0.753891 0.368637" pen="1">
+314.41 89 m
+409.41 89 l
+409.41 125 l
+314.41 125 l
+314.41 89 l
+h
+</path>
+<text stroke="0 0 0" pos="0 0" transformations="affine" valign="baseline" size="12" matrix="1 0 0 1 322.41 103.9">Superparticle1</text>
+<path stroke="0.282471 0.274399 0.435303" pen="1" dash="[1 6] 0">
+277.08 173.8 m
+292.87 161.56 314.26 144.96 331.62 131.5 c
+</path>
+<path fill="0.282471 0.274399 0.435303" fillrule="wind">
+334.01 134.07 m
+339.77 125.18 l
+329.72 128.54 l
+</path>
+<path stroke="0.282471 0.274399 0.435303" pen="1">
+334.01 134.07 m
+339.77 125.18 l
+329.72 128.54 l
+334.01 134.07 l
+h
+</path>
+<text stroke="0.282471 0.274399 0.435303" pos="0 0" transformations="affine" valign="baseline" size="12" matrix="1 0 0 1 314.91 146.4">Element</text>
+<path fill="0.980469 0.796875 0.482422" fillrule="wind">
+314.41 4 m
+409.41 4 l
+409.41 40 l
+314.41 40 l
+314.41 4 l
+h
+</path>
+<path stroke="0.980469 0.753891 0.368637" pen="1">
+314.41 4 m
+409.41 4 l
+409.41 40 l
+314.41 40 l
+314.41 4 l
+h
+</path>
+<text stroke="0 0 0" pos="0 0" transformations="affine" valign="baseline" size="12" matrix="1 0 0 1 322.41 25.4">Superparticle2</text>
+<text stroke="0 0 0" pos="0 0" transformations="affine" valign="baseline" size="12" matrix="1 0 0 1 344.41 12.4">(Alice)</text>
+<path stroke="0.282471 0.274399 0.435303" pen="1" dash="[1 6] 0">
+251.26 173.8 m
+247.66 152.38 244.69 115.42 259.91 89 c
+270.91 69.9199 289.9 55.4199 308.54 44.95 c
+</path>
+<path fill="0.282471 0.274399 0.435303" fillrule="wind">
+310.43 47.9 m
+317.63 40.1199 l
+307.15 41.7199 l
+</path>
+<path stroke="0.282471 0.274399 0.435303" pen="1">
+310.43 47.9 m
+317.63 40.1199 l
+307.15 41.7199 l
+310.43 47.9 l
+h
+</path>
+<text stroke="0.282471 0.274399 0.435303" pos="0 0" transformations="affine" valign="baseline" size="12" matrix="1 0 0 1 259.91 103.9">Element</text>
+<path stroke="0.748047 0.0744629 0.388184" pen="1">
+361.91 88.8 m
+361.91 77.6699 361.91 62.9398 361.91 50.2398 c
+</path>
+<path fill="0.748047 0.0744629 0.388184" fillrule="wind">
+365.41 50.1801 m
+361.91 40.1801 l
+358.41 50.1801 l
+</path>
+<path stroke="0.748047 0.0744629 0.388184" pen="1">
+365.41 50.1801 m
+361.91 40.1801 l
+358.41 50.1801 l
+365.41 50.1801 l
+h
+</path>
+<text stroke="0.748047 0.0744629 0.388184" pos="0 0" transformations="affine" valign="baseline" size="12" matrix="1 0 0 1 361.91 61.4">Follows</text>
+<path stroke="0.748047 0.0744629 0.388184" pen="1">
+409.6 29.6398 m
+419.93 28.9 427.41 26.35 427.41 22 c
+427.41 19.2801 424.49 17.2699 419.78 15.9602 c
+</path>
+<path fill="0.748047 0.0744629 0.388184" fillrule="wind">
+420.03 12.45 m
+409.6 14.3602 l
+418.94 19.3699 l
+</path>
+<path stroke="0.748047 0.0744629 0.388184" pen="1">
+420.03 12.45 m
+409.6 14.3602 l
+418.94 19.3699 l
+420.03 12.45 l
+h
+</path>
+<text stroke="0.748047 0.0744629 0.388184" pos="0 0" transformations="affine" valign="baseline" size="12" matrix="1 0 0 1 427.41 18.9">Follows</text>
+<path fill="0.744141 0.996094 0.556641" fillrule="wind">
+483.15 210 m
+392.67 210 l
+360.45 174 l
+515.37 174 l
+</path>
+<path stroke="0.689438 0.996094 0.462631" pen="1">
+483.15 210 m
+392.67 210 l
+360.45 174 l
+515.37 174 l
+483.15 210 l
+h
+</path>
+<text stroke="0 0 0" pos="0 0" transformations="affine" valign="baseline" size="12" matrix="1 0 0 1 401.41 188.9">UniverseBeta</text>
+<path stroke="0.282471 0.274399 0.435303" pen="1" dash="[1 6] 0">
+407.88 173.98 m
+400.44 168.84 392.89 162.75 386.91 156 c
+381.31 149.67 376.55 141.86 372.74 134.39 c
+</path>
+<path fill="0.282471 0.274399 0.435303" fillrule="wind">
+375.86 132.8 m
+368.43 125.25 l
+369.53 135.78 l
+</path>
+<path stroke="0.282471 0.274399 0.435303" pen="1">
+375.86 132.8 m
+368.43 125.25 l
+369.53 135.78 l
+375.86 132.8 l
+h
+</path>
+<text stroke="0.282471 0.274399 0.435303" pos="0 0" transformations="affine" valign="baseline" size="12" matrix="1 0 0 1 386.91 146.4">Element</text>
+<path stroke="0.282471 0.274399 0.435303" pen="1" dash="[1 6] 0">
+438.2 173.83 m
+437.84 146.8 433.7 93.7301 408.91 58 c
+406.09 53.9301 402.64 50.1398 398.9 46.6801 c
+</path>
+<path fill="0.282471 0.274399 0.435303" fillrule="wind">
+400.86 43.75 m
+390.94 40.0301 l
+396.38 49.1301 l
+</path>
+<path stroke="0.282471 0.274399 0.435303" pen="1">
+400.86 43.75 m
+390.94 40.0301 l
+396.38 49.1301 l
+400.86 43.75 l
+h
+</path>
+<text stroke="0.282471 0.274399 0.435303" pos="0 0" transformations="affine" valign="baseline" size="12" matrix="1 0 0 1 433.91 103.9">Element</text>
+<path fill="0.914062 0.638672 0.654297" fillrule="wind">
+153.74 210 m
+34.7102 210 l
+4.08984 174 l
+123.12 174 l
+</path>
+<path stroke="0.898438 0.560547 0.580063" pen="1">
+153.74 210 m
+34.7102 210 l
+4.08984 174 l
+123.12 174 l
+153.74 210 l
+h
+</path>
+<text stroke="0 0 0" pos="0 0" transformations="affine" valign="baseline" size="12" matrix="1 0 0 1 45.4102 188.9">ResultAlpha</text>
+<path stroke="0.0235291 0.317627 0.26268" pen="1" dash="[9 9] 0">
+86.7898 173.8 m
+91.9801 162.45 98.9 147.35 104.79 134.48 c
+</path>
+<path fill="0.0235291 0.317627 0.26268" fillrule="wind">
+108.07 135.72 m
+109.05 125.18 l
+101.7 132.81 l
+</path>
+<path stroke="0.0235291 0.317627 0.26268" pen="1">
+108.07 135.72 m
+109.05 125.18 l
+101.7 132.81 l
+108.07 135.72 l
+h
+</path>
+<text stroke="0.0235291 0.317627 0.26268" pos="0 0" transformations="affine" valign="baseline" size="12" matrix="1 0 0 1 100.91 146.4">Output</text>
+<path fill="0.744141 0.996094 0.556641" fillrule="wind">
+670.6 210 m
+561.33 210 l
+533.22 174 l
+642.49 174 l
+</path>
+<path stroke="0.689438 0.996094 0.462631" pen="1">
+670.6 210 m
+561.33 210 l
+533.22 174 l
+642.49 174 l
+670.6 210 l
+h
+</path>
+<text stroke="0 0 0" pos="0 0" transformations="affine" valign="baseline" size="12" matrix="1 0 0 1 571.91 188.9">ResultBeta</text>
+</page>
+</ipe>

@@ -1,0 +1,29 @@
+% !TEX root = report.tex
+\section{Conclusion}
+
+So far we have established that we could use Alloy Analyzer to verity if a \textsc{drc} query is safe under a given database schema. For future work, we could implement a translator to automate the verification process; that is, given as input the database specification and the query compatible with relational calculus, the translator converts the input into Alloy programming syntax to be verified by Alloy Analyzer.
+
+On the other hand, the presented framework itself is still limited as it could deal only with a small subset of what \textsc{drc} queries are capable of. Here are the list of features which could be added in this project in the future.
+\begin{itemize}[topsep=0.5pc,itemsep=0.25pc]
+    \item  \textbf{Support for all scalar value comparison operators.}\; In this project, the only allowed operation between one or more scalar values is the equality comparison operator ($=$). This does not fully reflect the behavior of the domain in real world.
+
+        One possible improvement is to make sure that \alloy{Superparticle}s are totally ordered so that other comparison operators such as $<$ and $\geq$ would work. On the same note, we should also be able to refer to primitive constant values, particularly the maximum and minimum values in the domain.
+
+        This should be relatively easy to implement since there is an undocumented Alloy library which supports total ordering out of the box. This improvement will make operations such as number comparison possible to model.
+
+    \item  \textbf{Support for bounded and unbounded integers.}\; This is an extended improvement over the previous point. However, this should be much more complicated since the support for integers in Alloy is very limited, apart from basic arithmetic operations like addition, subtraction, etc.
+
+    \item  \textbf{Support for functional dependencies in database schema.}\; Functional dependency in a database systems enforces the values of some columns of data based on other columns. For example, the table $\rel{GeoData}(\field{city},\field{state},\field{zipcode})$ may have the functional dependency
+        \[
+            \field{zipcode} \mapsto \field{city},\field{state}
+        \]
+        That is, based on \field{zipcode} alone, there is a unique \field{city} and a unique \field{state} in the table \rel{GeoData}.
+
+        This improvement will greatly benefit the query safety verification because (a) modeling functional dependency also implies modeling of primary keys, candidate keys, unique keys etc., and (b) the safety of \textsc{drc} queries also depends on functional dependencies.
+
+        The modeling of functional dependencies in Alloy should be simple at least for tables with at most two columns. For tables with three or more columns, being able to specify the multiplicity between columns is much more complicated.
+
+\end{itemize}
+
+% \medskip
+% On a slightly related note, it might be possible to expand the proposed verification framework to verify whether a \textbf{Datalog} querying syntax is safe. Datalog is another database query language similarly to relational calculus but with two notable differences: (1) Datalog instead uses Prolog-style, rule-based syntax, and (2) Datalog supports recursion in data model, which makes it more expressive than relational calculus \cite{Ullman:1988:PDK:42790}.

@@ -1,0 +1,28 @@
+Organization
+============
+- Explain relational databases
+  - Introducing database schema and instances
+  - Provide some examples of those databases
+  - Clarify the primary/foreign keys
+- Introduce database relational queries
+  - Mentions SQL, Relational Algebra, Relational Calculus, Datalog
+  - Give formal format of Relational Calculus
+  - Provide examples
+- Provide some weird, motivational examples
+  - Point out what was wrong
+  - Define concept of safety formally
+  - "Unsafe queries do not limit to queries which produce infinite results"
+  - Provide other examples
+- Formalize the problem
+  - Related work ??
+- Pick one example and explain how to translate
+  - Introduce each component as we translate our first example
+  - Run and see results
+  - Explain results
+- Another example
+  - Try to fix a query
+  - Failed again so debugging
+  - Voila!
+- Summarize the component of translation
+- Show experiments
+- Conclusion + Future work

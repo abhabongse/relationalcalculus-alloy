@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<!DOCTYPE ipestyle SYSTEM "ipe.dtd">
+<ipestyle name="lstlisting">
+<color name="PrimaryKeyword" value="0.228 0.372 0.804"/>
+<color name="SecondaryKeyword" value="0.804 0 0"/>
+<color name="TertiaryKeyword" value="0.4 0.804 0.668"/>
+<color name="String" value="0.804 0 0"/>
+<color name="SymbolA" value="0.545 0.545 0.512"/>
+<color name="SymbolB" value="0.545 0.46 0"/>
+<color name="Comment" value="0 0.545 0"/>
+<textstyle name="codeblock" begin="\begin{lstlisting}" end="\end{lstlisting}"/>
+<preamble>
+\makeatletter
+\usepackage{etoolbox}
+\usepackage{relsize}
+
+% SETUP COLORS
+\colorlet{Identifier}{black}
+\colorlet{Symbol}{SymbolA!60!SymbolB}
+
+% SETUP LSTLISTING
+\usepackage{listings}
+\lstset{%
+    % Basic Settings
+    basicstyle={\relscale{0.75}\ttfamily},%
+    captionpos=b,%
+    % Margins and Background
+    xleftmargin=1pc,%
+    xrightmargin=0pc,%
+    frame=none,%
+    framesep=0.5pc,%
+    framextopmargin=0pc,%
+    framexbottommargin=0pc,%
+    framexleftmargin=0pc,%
+    framexrightmargin=0pc,%
+    % Spacing and Horizontal Flow
+    showspaces=false,%
+    showstringspaces=false,%
+    showtabs=false,%
+    tabsize=2,%
+    breaklines=true,%
+    columns=fullflexible,%
+    keepspaces=true,%
+    % Vertical Flow
+    aboveskip=0pc,%
+    belowskip=0pc,%
+    abovecaptionskip=0pc,%
+    belowcaptionskip=0pc,%
+    lineskip=0.0001pt,
+    % Line Numbers
+    stepnumber=1,%
+    numbers=left,%
+    numbersep=0.5pc,%
+    numberstyle=\ttfamily\color{DarkGray},%
+    % Special Keyword Format
+    stringstyle=\color{String},%
+    commentstyle=\color{Comment},%
+    identifierstyle=\color{Identifier},%
+    keywordstyle=[1]{\bfseries\color{PrimaryKeyword}},%
+    keywordstyle=[2]{\bfseries\color{SecondaryKeyword}},%
+    keywordstyle=[3]{\bfseries\color{TertiaryKeyword}},%
+    extendedchars=true,%
+}
+
+\lstdefinelanguage{pseudocode}{%
+    keywordstyle=[1]{\bfseries\color{PrimaryKeyword}},%
+    keywordstyle=[2]{\bfseries\color{SecondaryKeyword}},%
+    keywordstyle=[3]{\color{TertiaryKeyword}},%
+    morekeywords={[1],if,then,else,while,do,end,loop,until,for,to,downto,%
+        return,print,def},%
+    morekeywords={[2],true,false,null,nil},%
+    sensitive=false,%
+    morestring=[b]",%
+    morestring=[b]',%
+    morecomment=[l]{//},%
+    literate=*%
+        %% Single character
+        {:}{{{\bfseries\color{Symbol}{:}}}}1
+        ,
+    mathescape=true,%
+}
+
+\lstdefinelanguage{alloy}{%
+    morekeywords=[1]{%
+        abstract,all,and,as,assert,but,check,disj,else,enum,exactly,expect,%
+        extends,fact,for,fun,iden,iff,implies,in,Int,int,let,lone,module,no,%
+        none,not,one,open,or,pred,private,run,seq,set,sig,some,sum,this,univ},%
+    morekeywords=[2]{%
+        plus,minus,mul,div,rem,elems,first,last,rest,butlast,isEmpty,hasDups,%
+        inds,lastIdx,afterLastIdx,idxOf,lastIdxOf,indsOf,add,setAt,insert,
+        delete,append,subseq},%
+    alsodigit={'"},%
+    identifierstyle=\color{black!80},%
+    sensitive=true,%
+    morecomment=[l]{//},%
+    morecomment=[l]{--},%
+    morecomment=[s]{/*}{*/},%
+    escapeinside={&lt;|}{|&gt;},%
+    literate=*%
+        %% Single character
+        {:}{{{\bfseries\color{Symbol}{:}}}}1
+        {,}{{{\bfseries\color{Symbol}{,}}}}1
+        {@}{{{\color{Symbol}{@}}}}1
+        {!}{{{\color{Symbol}{!}}}}1
+        {\#}{{{\color{Symbol}{\#}}}}1
+        {\~}{{{\color{Symbol}{\~}}}}1
+        {*}{{{\color{Symbol}{*}}}}1
+        {\^}{{{\color{Symbol}{\^}}}}1
+        {\&amp;}{{{\color{Symbol}{\&amp;}}}}1  % combined
+        {+}{{{\color{Symbol}{+}}}}1  % combined
+        {-}{{{\color{Symbol}{-}}}}1
+        {.}{{{\bfseries\color{Symbol}{.}}}}1
+        {=}{{{\color{Symbol}{=}}}}1
+        {&lt;}{{{\color{Symbol}{&lt;}}}}1
+        {>}{{{\color{Symbol}{&gt;}}}}1
+        {|}{{{\bfseries\color{Symbol}{|}}}}1
+        %% Double characters
+        {||}{{{\color{Symbol}{||}}}}1  % combined special
+        {\&amp;\&amp;}{{{\color{Symbol}{\&amp;\&amp;}}}}1  % combined special
+        {=&gt;}{{{\color{Symbol}{=&gt;}}}}2  % combined
+        {++}{{{\color{Symbol}{++}}}}2
+        {&lt;:}{{{\color{Symbol}{&lt;:}}}}2
+        {:&gt;}{{{\color{Symbol}{:&gt;}}}}2
+        {=&lt;}{{{\color{Symbol}{=&lt;}}}}1  % combined
+        {&gt;=}{{{\color{Symbol}{&gt;=}}}}1  % combined
+        {-&gt;}{{{\color{Symbol}{-&gt;}}}}2  % special
+        {!=}{{{\color{Symbol}{!=}}}}1  % special
+        %% Triple characters
+        {&lt;=&gt;}{{{\color{Symbol}{&lt;=&gt;}}}}2  % combined
+        ,
+}
+
+\newcommand\alloy[1]{\lstinline[language=alloy,basicstyle={\ttfamily}]{#1}}
+
+\makeatother
+</preamble>
+</ipestyle>

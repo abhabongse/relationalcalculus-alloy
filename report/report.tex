@@ -1,0 +1,83 @@
+\documentclass[10pt,twoside]{tenth}
+
+\usepackage[norndcorners,customcolors]{hf-tikz}
+\hfsetbordercolor{Yellow3!50}
+\hfsetfillcolor{Yellow2!30}
+
+\input{alloy.tex}  % alloy syntax highlighter and set as default listing
+
+%%--------------------------------------------
+%%  Define commands
+%%--------------------------------------------
+\newrobustcmd{\texthyphens}{\mathcode`\-=`\-\relax}
+\newrobustcmd{\id}[1]{\ensuremath{\mathit{\color{red} #1}}}  % to be removed
+\newrobustcmd{\rel}[1]{\ensuremath{\text{\textnormal{\textsf{\textbf{#1}}}}}}  % relation and field names
+\newrobustcmd{\field}[1]{\ensuremath{\mathsf{\texthyphens#1}}}  % relation and field names
+\newrobustcmd{\var}[1]{\ensuremath{\mathit{#1}}}  % variables
+\newrobustcmd{\val}[1]{\ensuremath{\text{\textnormal{\ttfamily{#1}}}}} % values
+\newrobustcmd{\str}[1]{\ensuremath{\text{\textnormal{`\ttfamily{#1}}'}}} % string values
+
+% Highlight inside lstlisting
+\newrobustcmd{\hll}[1]{\makebox[0pt]{\tikzmarkin{hl:#1}(0.1,0.3)(0.0,-0.1)}}
+\newrobustcmd{\hlr}[1]{{\tikzmarkend{hl:#1}}}
+
+% Paragraph in caption
+\newrobustcmd{\captionpar}{\smallskip\hspace*{2pc}}
+
+% Variable inside code
+\colorlet{CodeVariable}{rgb:Orange2,5;black,2}
+
+%%--------------------------------------------
+%%  Define document attributes
+%%--------------------------------------------
+\newrobustcmd\mytitle{%
+    Safety Checking for Domain Relational Calculus Queries %
+    Using Alloy Analyzer %
+}
+\newrobustcmd\myauthor{Abhabongse Janthong}
+
+\renewrobustcmd\leftheader{%
+    \adforn{34}\: safety checking for drc {q}ueries using alloy analyzer}
+\renewrobustcmd\rightheader{%
+    abhabongse\: janthong\: \adforn{62}}
+
+\title{\mytitle}
+\author{\myauthor}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+    \smallskip\setstretch{1}
+    A domain relational calculus (\textsc{drc}) query is a database query which uses the mathematical set notation to enumerate the result based on the data in the database. A \textsc{drc} query is safe if and only if it is domain-independent, i.e., the result of the query is determined solely by the data in the database, not the domain of data values. In this project, we provide a framework for verifying whether a given \textsc{drc} query is safe by translating the problem into a verification task in Alloy language. We also experiment with our translation framework using various examples of safe and unsafe queries.
+\end{abstract}
+
+\begin{small}
+    \tableofcontents
+\end{small}
+\clearpage
+
+\input{ch01_intro.tex}
+\bigskip
+\input{ch02_design.tex}
+\bigskip
+\input{ch03_example.tex}
+\bigskip
+\input{ch04_experiment.tex}
+\bigskip
+\input{ch05_conclusion.tex}
+
+
+\begin{center}
+    \adforn{21}\quad\adforn{11}\quad\adforn{49}
+\end{center}
+
+% \appendix
+% \input{chap_additional.tex}
+
+\newpage
+\bibliographystyle{alpha}
+\bibliography{refs}
+
+\end{document}

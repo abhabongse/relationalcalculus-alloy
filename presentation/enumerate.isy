@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE ipestyle SYSTEM "ipe.dtd">
+<ipestyle name="enumerate">
+<textstyle name="itemize" begin="\begin{itemize}" end="\end{itemize}"/>
+<textstyle name="enumerate" begin="\begin{enumerate}" end="\end{enumerate}"/>
+<textstyle name="description" begin="\begin{description}" end="\end{description}"/>
+<preamble>
+\makeatletter
+
+\usepackage{enumitem}
+\usepackage{fontawesome}
+\setlist{topsep=0.25pc,itemsep=0.25pc,partopsep=0pc,parsep=0pc}
+% \setlist[2]{topsep=0.25pc,itemsep=0.5pc}
+% \setlist[1]{topsep=0.5pc,itemsep=0.25pc}
+% FontAwesome replacement for bullet points
+\setlist[itemize,1]{label={\scriptsize\faChevronCircleRight}}
+
+\makeatother
+</preamble>
+</ipestyle>

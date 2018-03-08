@@ -1,0 +1,85 @@
+% !TEX root = report.tex
+%%--------------------------------------------
+%%  Define Alloy syntax for highlighting
+%%--------------------------------------------
+\lstdefinelanguage{alloy}{%
+    morekeywords=[1]{%
+        abstract,all,and,as,assert,but,check,disj,else,enum,exactly,expect,%
+        extends,fact,for,fun,iden,iff,implies,in,Int,int,let,lone,module,no,%
+        none,not,one,open,or,pred,private,run,seq,set,sig,some,sum,this,univ},%
+    morekeywords=[2]{%
+        plus,minus,mul,div,rem,elems,first,last,rest,butlast,isEmpty,hasDups,%
+        inds,lastIdx,afterLastIdx,idxOf,lastIdxOf,indsOf,add,setAt,insert,
+        delete,append,subseq},%
+    literate=*%
+        %% Single character
+        {:}{{{\bfseries\color{Symbol}{:}}}}1
+        {@}{{{\color{Symbol}{@}}}}1
+        {!}{{{\color{Symbol}{!}}}}1
+        {\#}{{{\color{Symbol}{\#}}}}1
+        {\~}{{{\color{Symbol}{\~}}}}1
+        {*}{{{\color{Symbol}{*}}}}1
+        {\^}{{{\color{Symbol}{\^}}}}1
+        {\&}{{{\color{Symbol}{\&}}}}1  % combined
+        {+}{{{\color{Symbol}{+}}}}1  % combined
+        {-}{{{\color{Symbol}{-}}}}1
+        {.}{{{\bfseries\color{Symbol}{.}}}}1
+        {=}{{{\color{Symbol}{=}}}}1
+        {<}{{{\color{Symbol}{<}}}}1
+        {>}{{{\color{Symbol}{>}}}}1
+        {|}{{{\bfseries\color{Symbol}{|}}}}1
+        %% Double characters
+        {||}{{{\color{Symbol}{||}}}}1  % combined special
+        {\&\&}{{{\color{Symbol}{\&\&}}}}1  % combined special
+        {=>}{{{\color{Symbol}{=>}}}}2  % combined
+        {++}{{{\color{Symbol}{++}}}}2
+        {<:}{{{\color{Symbol}{<:}}}}2
+        {:>}{{{\color{Symbol}{:>}}}}2
+        {=<}{{{\color{Symbol}{=<}}}}1  % combined
+        {>=}{{{\color{Symbol}{>=}}}}1  % combined
+        {->}{{{\color{Symbol}{->}}}}2  % special
+        {!=}{{{\color{Symbol}{!=}}}}1  % special
+        %% Triple characters
+        {<=>}{{{\color{Symbol}{<=>}}}}2  % combined
+        ,
+    % literate=*%
+    %     %% Single character
+    %     {:}{{{\bfseries\color{Symbol}{:}}}}1
+    %     {@}{{{\color{Symbol}{@}}}}1
+    %     {!}{{{\color{Symbol}{!}}}}1
+    %     {\#}{{{\color{Symbol}{\#}}}}1
+    %     {\~}{{{\color{Symbol}{\~}}}}1
+    %     {*}{{{\color{Symbol}{*}}}}1
+    %     {\^}{{{\color{Symbol}{\^}}}}1
+    %     {\&}{{{\color{Symbol}{$\cap$}}}}1  % combined
+    %     {+}{{{\color{Symbol}{$\cup$}}}}1  % combined
+    %     {-}{{{\color{Symbol}{-}}}}1
+    %     {.}{{{\bfseries\color{Symbol}{.}}}}1
+    %     {=}{{{\color{Symbol}{=}}}}1
+    %     {<}{{{\color{Symbol}{<}}}}1
+    %     {>}{{{\color{Symbol}{>}}}}1
+    %     {|}{{{\bfseries\color{Symbol}{|}}}}1
+    %     %% Double characters
+    %     {||}{{{\color{Symbol}{$\lor$}}}}1  % combined special
+    %     {&&}{{{\color{Symbol}{$\land$}}}}1  % combined special
+    %     {=>}{{{\color{Symbol}{$\Rightarrow$}}}}2  % combined
+    %     {++}{{{\color{Symbol}{++}}}}2
+    %     {<:}{{{\color{Symbol}{<:}}}}2
+    %     {:>}{{{\color{Symbol}{:>}}}}2
+    %     {=<}{{{\color{Symbol}{$\le$}}}}1  % combined
+    %     {>=}{{{\color{Symbol}{$\ge$}}}}1  % combined
+    %     {->}{{{\color{Symbol}{$\rightarrow$}}}}2  % special
+    %     {!=}{{{\color{Symbol}{$\neq$}}}}1  % special
+    %     %% Triple characters
+    %     {<=>}{{{\color{Symbol}{$\Leftrightarrow$}}}}2  % combined
+    %     ,
+    alsodigit={'"},%
+    identifierstyle=\color{black!80},%
+    sensitive=true,%
+    morecomment=[l]{//},%
+    morecomment=[l]{--},%
+    morecomment=[s]{/*}{*/},%
+    escapeinside={<|}{|>}}
+
+\newrobustcmd\alloy[1]{\lstinline[language=alloy]{#1}}
+\newrobustcmd\alloyfn[1]{\lstinline[language=alloy,basicstyle={\ttfamily\footnotesize}]{#1}}

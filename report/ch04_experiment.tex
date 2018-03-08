@@ -1,0 +1,197 @@
+% !TEX root = report.tex
+\section{The Experiment}
+\label{sec:experiment}
+
+\subsection{Experiment set-up}
+
+In this section, we evaluate how well our proposed Alloy verification framework performs on various \textsc{drc} database queries. Below are the list of database tables in the schema.
+
+\newrobustcmd\Employee{\rel{Employee}}
+\newrobustcmd\Supervisor{\rel{Supervisor}}
+\newrobustcmd\Reviewer{\rel{Reviewer}}
+
+\begin{itemize}[topsep=0.5pc,itemsep=0.25pc]
+    \item  $\Employee(\field{id}, \field{security-level})$:\; each employer ID and their security levels; and
+    \item  $\Supervisor(\field{employee-id},\field{boss-id})$:\; stores employee--boss pairs
+    \item  $\Reviewer(\field{employee-id},\field{year},\field{reviewer-id})$:\; stores the employee ID of the performance reviewer for each employee in each year
+\end{itemize}
+
+\newrobustcmd{\empX}{\ensuremath{x}}
+\newrobustcmd{\empY}{\ensuremath{y}}
+\newrobustcmd{\boss}{\ensuremath{b}}
+\newrobustcmd{\level}{\ensuremath{\ell}}
+\newrobustcmd{\yearT}{\ensuremath{t}}
+
+\medskip\noindent
+We also consider the following \textsc{drc} queries.
+
+\begin{itemize}[topsep=0.5pc,itemsep=0.25pc]
+    \item  $\boldsymbol{Q_1}$\hrsp:\;\marginnote{\textsc{safe}}
+        Pairs of employees who share the same boss, and at least one of them has the same security level as their boss.
+        \begin{align*}
+            Q_1 &= \big\{ \empX, \empY \mid
+                \exists \boss \hrsp\big[
+                    \Supervisor(\empX, \boss) \wedge \Supervisor(\empY, \boss) \\
+            & \qquad\qquad\qquad\wedge \exists \level \hrsp[\Employee(\boss, \level) \wedge (\Employee(\empX, \level) \vee \Employee(\empY, \level))]\big]\big\}
+        \end{align*}
+
+    \item  $\boldsymbol{Q_2}$\hrsp:\;\marginnote{\textsc{unsafe}}
+        Employees without their own bosses.
+        \begin{align*}
+            Q_2 &= \big\{ \empX \mid
+                \neg \exists \boss \hrsp[\Supervisor(\empX, \boss)] \big\}
+        \end{align*}
+
+    \item  $\boldsymbol{Q_3}$\hrsp:\;\marginnote{\textsc{unsafe}}
+        Pairs of employees, one of which has the same security level as one of their bosses.
+        \begin{align*}
+            Q_3 &= \big\{ \empX, \empY \mid
+                \exists \boss \exists \level \hrsp[\Employee(\boss, \level) \\
+            & \qquad\qquad\qquad\qquad\wedge (\Employee(\empX, \level) \wedge \Supervisor(x, b)  \\
+            & \qquad\qquad\qquad\qquad\qquad\vee \Employee(\empY, \level) \wedge \Supervisor(y, b))]\big\}
+        \end{align*}
+
+    \item  $\boldsymbol{Q_4}$\hrsp:\;\marginnote{\textsc{safe}}
+        Pairs of employees who review each other within the same year.
+        \begin{align*}
+            Q_4 &= \big\{ \empX, \empY \mid
+                \exists \yearT \hrsp[\Reviewer(\empX, \yearT, \empY) \wedge \Reviewer(\empY, \yearT, \empX)] \big\}
+        \end{align*}
+
+    \item  $\boldsymbol{Q_5}$\hrsp:\;\marginnote{\textsc{unsafe}}
+        \emph{Super} employees who (a) has reviewed everyone else at some point (excluding themselves), and (b) is a boss of at least one employee.
+        \begin{align*}
+            Q_5 &= \big\{ \boss \mid
+                \forall \empX \exists \yearT \hrsp[\Reviewer(\empX, \yearT, \boss)]
+                \wedge \exists \empY \hrsp[
+                \Supervisor(\empY, \boss) \wedge \neg(\empY = \boss)] \big\}
+        \end{align*}
+\end{itemize}
+
+
+\begin{lstlisting}[language=alloy,float,basicstyle={\footnotesize\ttfamily},caption={The complete Alloy program which verifies queries {\protect $Q_1$ through $Q_5$} as defined earlier in \sectionref{sec:experiment}. To verify the safety of other query functions, some portions of the code (shown highlighted) needs to be modified.},label={src:experiment},aboveskip=0pc,belowskip=0pc]
+/* Scalar values */
+sig Superparticle {} {
+	Superparticle = Universe.Element
+}
+
+/* Domains */
+abstract sig Universe { Element: some Superparticle }
+one sig UniverseAlpha, UniverseBeta extends Universe {}
+
+/* Common domain */
+some sig Particle in Superparticle {} {
+	Particle = UniverseAlpha.Element & UniverseBeta.Element
+}
+
+/* Database Instance */
+one sig Table {
+    Employee: Particle -> Particle,
+    Supervisor: Particle -> Particle,
+    Reviewer: Particle -> Particle -> Particle
+}
+
+/* Query functions */
+fun query1[u: Universe]: Superparticle -> Superparticle {
+    { x, y: u.Element | some b: u.Element |
+        (x -> b in Table.Supervisor) and (y -> b in Table.Supervisor) and
+        (some l: u.Element | (b -> l in Table.Employee) and
+                             ((x -> l in Table.Employee) or (y -> l in Table.Employee))) }
+}
+fun query2[u: Universe]: set Superparticle {
+    { x: u.Element | not some b: u.Element | x -> b in Table.Supervisor }
+}
+fun query3[u: Universe]: Superparticle -> Superparticle {
+    { x, y: u.Element | some b, l: u.Element |
+        (b -> l in Table.Employee) and
+        ((x -> l in Table.Employee) and (x -> b in Table.Supervisor) or
+         (y -> l in Table.Employee) and (y -> b in Table.Supervisor)) }
+}
+fun query4[u: Universe]: Superparticle -> Superparticle {
+    { x, y: u.Element | some t: u.Element |
+        (x -> t -> y in Table.Reviewer) or (y -> t -> x in Table.Reviewer) }
+}
+fun query5[u: Universe]: set Superparticle {
+    { b: u.Element |
+        (all x: u.Element | some t: u.Element | x -> t -> b in Table.Reviewer) and
+        (some y: u.Element | (y -> b in Table.Supervisor) and not (y = b)) }
+}
+
+/* Safety assertion */
+assert queryIsSafe {
+    all u, u': Universe | <|\hll{exp-assert1}|>query1<|\hlr{exp-assert1}|>[u] = <|\hll{exp-assert2}|>query1<|\hlr{exp-assert2}\label{li:replace-assert}|>[u']
+}
+
+/* Results placeholder */
+abstract sig Result {
+    OneColOutput: set Superparticle,
+    TwoColOutput: Superparticle -> Superparticle
+}
+one sig ResultAlpha, ResultBeta extends Result {} {
+    ResultAlpha. <|\hll{exp-alpha-o}\llap{\color{Symbol}@}|>TwoColOutput<|\hlr{exp-alpha-o}|> = <|\hll{exp-alpha}|>query1<|\hlr{exp-alpha}\label{li:replace-alpha}|>[UniverseAlpha]
+    ResultBeta. <|\hll{exp-beta-o}\llap{\color{Symbol}@}|>TwoColOutput<|\hlr{exp-beta-o}|> = <|\hll{exp-beta}|>query1<|\hlr{exp-beta}\label{li:replace-beta}|>[UniverseBeta]
+}
+
+/* Invoke the verification on the assertion */
+check queryIsSafe for 4
+\end{lstlisting}
+
+\bigskip
+\marginhead{How to verify each specific query}
+The Alloy model for these \textsc{drc} queries are shown in \autoref{src:experiment}. By default the Alloy program verifies the query $Q_1$. If we wish to verify other queries, we need to modify some parts of the code (shown highlighted). Specifically,
+\begin{itemize}[topsep=0.5pc,itemsep=0.25pc]
+    \item  The query function name \alloy{query1} on lines \ref{li:replace-assert}, \ref{li:replace-alpha}, and \ref{li:replace-beta} should be replaced by names of other functions such as \alloy{query2}, \alloy{query3}, etc.
+    \item  The result placeholder \alloy{TwoColOutput} may need to be changed to \alloy{OneColOutput} depending of the output signature of the query function.
+\end{itemize}
+
+\subsection{Verification result and analysis}
+
+As we expect, Alloy Analyzer has \emph{correctly} determined whether all of these queries are safe. For unsafe queries $Q_2$, $Q_3$, and $Q_5$, Alloy finds the first counterexample in relatively short time (underlined in the output below). The console output for each of these unsafe queries are reproduced here (emphasis added).
+
+\begin{lstlisting}[numbers=none,escapeinside={<|}{|>},xleftmargin=6pc]
+<|\llap{\textbf{query2:~~}}|>Executing "Check queryIsSafe for <|\uline{\textbf{10}}|>"
+   Solver=sat4j Bitwidth=0 MaxSeq=0 SkolemDepth=1 Symmetry=20
+   4658 vars. 1464 primary vars. 6953 clauses. 15ms.
+   <|\uline{Counterexample} \uline{found}|>. Assertion is invalid. <|\uline{\textbf{17ms}}|>.
+\end{lstlisting}
+
+\begin{lstlisting}[numbers=none,escapeinside={<|}{|>},xleftmargin=6pc]
+<|\llap{\textbf{query3:~~}}|>Executing "Check queryIsSafe for <|\uline{\textbf{10}}|>"
+    Solver=sat4j Bitwidth=0 MaxSeq=0 SkolemDepth=1 Symmetry=20
+    38148 vars. 1464 primary vars. 128213 clauses. 2068ms.
+   <|\uline{Counterexample} \uline{found}|>. Assertion is invalid. <|\uline{\textbf{189ms}}|>.
+\end{lstlisting}
+
+\newpage
+\begin{lstlisting}[numbers=none,escapeinside={<|}{|>},xleftmargin=6pc]
+<|\llap{\textbf{query5:~~}}|>Executing "Check queryIsSafe for <|\uline{\textbf{10}}|>"
+   Solver=sat4j Bitwidth=0 MaxSeq=0 SkolemDepth=1 Symmetry=20
+   9498 vars. 1464 primary vars. 24953 clauses. 58ms.
+   <|\uline{Counterexample} \uline{found}|>. Assertion is invalid. <|\uline{\textbf{99ms}}|>.
+\end{lstlisting}
+
+\noindent
+For safe queries $Q_1$ and $Q_4$, here is the console output (emphasis added).
+
+\begin{lstlisting}[numbers=none,escapeinside={<|}{|>},xleftmargin=6pc]
+<|\llap{\textbf{query1:~~}}|>Executing "Check queryIsSafe for <|\uline{\textbf{10}}|>"
+   Solver=sat4j Bitwidth=0 MaxSeq=0 SkolemDepth=1 Symmetry=20
+   32858 vars. 1464 primary vars. 105823 clauses. 457ms.
+   <|\uline{No} \uline{counterexample} \uline{found}|>. Assertion may be valid. <|\uline{\textbf{16593ms}}|>.
+\end{lstlisting}
+
+\begin{lstlisting}[numbers=none,escapeinside={<|}{|>},xleftmargin=6pc]
+<|\llap{\textbf{query4:~~}}|>Executing "Check queryIsSafe for <|\uline{\textbf{10}}|>"
+   Solver=sat4j Bitwidth=0 MaxSeq=0 SkolemDepth=1 Symmetry=20
+   7898 vars. 1464 primary vars. 17663 clauses. 39ms.
+   <|\uline{No} \uline{counterexample} \uline{found}|>. Assertion may be valid. <|\uline{\textbf{132ms}}|>.
+\end{lstlisting}
+
+\begin{note}
+    In terms of computational cost,
+    \begin{itemize}[topsep=0.5pc,itemsep=0.25pc]
+        \item  Queries with more complex syntax tend to take more time to verify (cf.\ \alloy{query1} vs.\ \alloy{query4}) even if the maximum numbers of objects for each type in the search space are the same.
+        \item  When comparing queries with similar complexity (such as \alloy{query1} vs.\ \alloy{query3}), unsafe queries take less computation time as it only requires to find one counterexample whereas safe queries need to exhaust the search space.
+    \end{itemize}
+    In addition, if we choose to vary the maximum number of objects for each model type in Alloy verification task, then undoubtedly, as the number increases, the computational cost also increases. This is a normal Alloy behavior so we would not include the result of such experiment here.
+\end{note}

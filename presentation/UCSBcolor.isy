@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE ipestyle SYSTEM "ipe.dtd">
+<ipestyle name="UCSBcolor">
+<color name="UCSBUsafaBlue" value="0 0.2745 0.5451"/>
+<color name="UCSBSunglow" value="1 0.8078 0.2039"/>
+<color name="UCSBSpaceCadet" value="0.0941 0.2 0.3647"/>
+<color name="UCSBVividTangelo" value="0.9529 0.4588 0.1255"/>
+<color name="UCSBPurpureus" value="0.5725 0.3804 0.6588"/>
+<color name="UCSBBlueJeans" value="0.349 0.7137 0.902"/>
+<color name="UCSBDarkLiver" value="0.302 0.3059 0.3059"/>
+<color name="UCSBPlatinum" value="0.9137"/>
+<color name="UCSBWhiteSmoke" value="0.9569 0.9608 0.9608"/>
+</ipestyle>
