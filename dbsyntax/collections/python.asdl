@@ -124,10 +124,10 @@ excepthandler = ExceptHandler(expr? type, identifier? name, stmt* body)
 arguments = (arg* args, arg? vararg, arg* kwonlyargs, expr* kw_defaults,
              arg? kwarg, expr* defaults)
 
--- Change #2: Attribute section is commented out since the original
--- Zephyr ASDL did not specify such feature
-arg = (identifier arg, expr? annotation)
-       -- attributes (int lineno, int col_offset)
+-- Change #2: Attribute section in product type presented in Python grammar
+-- does not actually exist in Zephyr ASDL specification since they could
+-- be combined with the actual product.
+arg = (identifier arg, expr? annotation, int lineno, int col_offset)
 
 -- keyword arguments supplied to call (NULL identifier for **kwargs)
 keyword = (identifier? arg, expr value)

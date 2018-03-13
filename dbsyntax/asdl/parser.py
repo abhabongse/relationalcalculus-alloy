@@ -3,7 +3,6 @@
 Simply call the standalone function `parser` with the source code string
 in order parse the source code.
 """
-
 from string import (
     ascii_uppercase as uppers, ascii_lowercase as lowers, digits
     )
@@ -60,7 +59,7 @@ def xlist(iterable):
 
 Field = (
     typeId
-    + Optional(Literal('?') | Literal('*'), default=None)
+    + Optional(Literal('?') | Literal('*'), default='')
     + Optional(anyId, default=None)
     ).setParseAction(ast.Field.make)
 
@@ -90,3 +89,32 @@ Definition = (
 Program = Group(
     ZeroOrMore(Definition).ignore(dblDashComment)
     ).setParseAction(ast.Program.make)
+
+#################################
+## Main program execution tool ##
+#################################
+
+def _get_program_args(args=None):
+    """Parse command line program arguments."""
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('source_file', nargs='?')
+    if args is None:
+        return parser.parse_args()  # uses sys.args[1:]
+    return parser.parse_args(args)
+
+def _get_source_content(source_fname):
+    """Obtain entire text from source file."""
+    import sys
+    if source_fname is None:
+        return sys.stdin.read()
+    with open(source_fname) as sf:
+        return sf.read()
+
+def _main():
+    program_args = _get_program_args()
+    source_content = _get_source_content(program_args.source_file)
+    print(parser(source_content))
+
+if __name__ == '__main__':
+    _main()
