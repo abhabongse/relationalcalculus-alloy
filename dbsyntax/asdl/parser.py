@@ -11,7 +11,7 @@ from pyparsing import (
     Group, Literal, Regex, Suppress, Word, Optional, ZeroOrMore
     )
 
-from . import ast
+from . import old_ast as ast
 
 ##############################
 ## Parsing helper functions ##
