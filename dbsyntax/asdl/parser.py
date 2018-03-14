@@ -8,7 +8,7 @@ from string import (
     )
 
 from pyparsing import (
-    Group, Literal, Regex, Suppress, Word, Optional, ZeroOrMore
+    Group, Literal, Regex, Suppress, Combine, Word, Optional, ZeroOrMore
     )
 
 from . import old_ast as ast
