@@ -4,8 +4,13 @@ There are two possible approaches:
 1. namedtuple-style class constructor
 2. Metaclass (a class constructor which extends `type`)
 
-This package implements a combination of both.
+This package implements a combination of both approaches.
 """
+from .helpers import (
+    isalphaidentifier,
+    isupperidentifier as isconstructorid,
+    isloweridentifier as istypeid,
+    )
 
 #############################
 ## Main AST implementation ##
