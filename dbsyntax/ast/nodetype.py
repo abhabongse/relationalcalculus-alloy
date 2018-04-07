@@ -1,8 +1,8 @@
 """AST node classes constructor.
 
 There are two possible approaches:
-1. namedtuple-style class constructor
-2. Metaclass (a class constructor which extends `type`)
+  1. namedtuple-style class constructor
+  2. Metaclass (a class constructor which extends `type`)
 
 This package implements a combination of both approaches.
 """
