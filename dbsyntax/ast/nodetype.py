@@ -16,36 +16,108 @@ from .helpers import (
 ## Main AST implementation ##
 #############################
 
-class AST(object):
-    """An umbrella class implementation representing an entire abstract
-    syntax tree (AST) structure of a language. To create a new set of
-    AST nodes, an ASDL-like python built-in object must be supplied at
-    the construction of the AST object.
-    """
-    def __init__(self, name, spec, builtins):
-        """Constructs AST for a new language.
+def makeast(name, spec, builtins):
+    """Converts a new language specification into a collection of node
+    types (constructors for AST node subclasses) based on a given input
+    language specification in ASDL style (sans product type).
 
-        Arguments:
-            name (str): Name of the language.
-            spec: Entire ASDL specification of a language AST in terms
-                of python built-in types (see below)
-            builtins (dict): A mapping from each type identifier string
-                (as appeared in the spec) to a native python callable
-                which converts a token string into native python instance.
-
-        The format of ``spec`` is as follows.
-            <spec> ::= [<defn>, ...]
-            <defn> ::= [<type_id: str>, <type>]
-            <type> ::= <prod_type> | <sum_type>
-            <prod_type> ::= ['prod', <fields>]
-            <sum_type> ::= ['sum', <constructors>, <fields>]
-            <constructors> ::= [<constructor>, ...]
-            <constructor> ::= [<constructor_id: str>, <fields>]
-            <fields> ::= [<field>, ...]
-            <field> ::= [<type_id: str>, <modifier>, <attr_name: str>]
+    Arguments:
+        name (str): Name of new language, which will also be the common
+            class name from which each node type is inherited.
+        spec (dict): Entire ASDL specification of a new language, specifically:
+            <spec> ::= Dict[<type_id: str> → <type>, ...]
+            <type> ::= Tuple[<constructors>, <attributes>]
+            <constructors> ::= Dict[<constructor_id: str> → <fields>, ...]
+            <attributes> ::= <fields>
+            <fields> ::= Sequence[
+                Tuple[<type_id: str>, <modifier>, <attr_name: str>], ...]
             <modifier> ::= '?' | '*' | ''
-        """
-        pass
+        builtins (dict): Built-in types
+
+    Returns:
+        Mapping from constructor IDs to newly created constructors.
+    """
+    # Check type IDs should be strings of valid format
+    for type_id in spec.keys():
+        _check_type_id(type_id)
+
+    # Gather all type ID strings
+    all_type_ids = set(builtins) | set(spec)
+
+    # Build each constructor
+    all_constructors = {}
+    for type_id, (constructors, attributes) in spec.items():
+        for constructor_id, fields in constructors.items():
+
+            # Constructor ID should be string of valid format
+            _check_constructor_id(constructor_id)
+
+            # Constructor ID must not be a duplicate
+            if constructor_id in all_constructors:
+                raise ValueError(f'duplicated constructor: {constructor_id}')
+
+            # Combine fields and attributes, and valid each of them
+            combined_fields = _combine(fields, attributes)
+            _check_fields(combined_fields, all_type_ids)
+
+            # Create constructor and save
+            constructor = makeconstructor(constructor_id, combined_fields)
+            all_constructors[constructor_id] = constructor
+
+    return all_constructors
+
+
+def makeconstructor(constructor_id, fields):
+    # TODO: implement this
+    raise NotImplementedError
+
+# nodetype.makeast(
+#     'NewLanguage',
+#     {'expr': ({'Number': [('int', '', 'num')],
+#                'BinaryOp': [('expr', '', 'left'), ('expr', '', 'right')],
+#                'UnaryOp': [('expr', '', 'val')]},
+#               [('str', '', 'lineno')])},
+#     {'int': int, 'str': str},
+#     )
+
+#########################################
+## Smaller pieces of the main function ##
+#########################################
+
+def _check_type_id(type_id):
+    """Check if the given type ID is valid."""
+    if not isinstance(type_id, str):
+        raise TypeError(f'invalid type identifier: {type_id}')
+    if not istypeid(type_id):
+        raise ValueError(f'invalid type identifier: {type_id}')
+
+def _check_constructor_id(constructor_id):
+    """Check if the given constructor ID is valid."""
+    if not isinstance(constructor_id, str):
+        raise TypeError(f'invalid constructor identifier: {constructor_id}')
+    if not isconstructorid(constructor_id):
+        raise ValueError(f'invalid constructor identifier: {constructor_id}')
+
+def _combine(fields, attributes):
+    """Combine attributes into fields."""
+    if not isinstance(fields, list):
+        raise TypeError(f'fields must be a sequence: {fields}')
+    if not isinstance(attributes, list):
+        raise TypeError(f'attributes must be a sequence: {attributes}')
+    return list(fields) + list(attributes)
+
+def _check_fields(fields, all_type_ids):
+    """Check if type in field is known to language."""
+    seen_names = set()
+    for type_id, modifier, attr_name in fields:
+        if type_id not in all_type_ids:
+            raise ValueError(f'unknown type: {type_id}')
+        if modifier not in ('*', '?', ''):
+            raise ValueError(f'invalid modifier: {modifier}')
+        if attr_name and attr_name in seen_names:
+            raise ValueError(f'duplicated attribute: {attr_name}')
+        seen_names.add(attr_name)
+
 
 # ################################################################################
 # ### namedtuple

@@ -116,23 +116,23 @@ unaryop = Invert | Not | UAdd | USub
 
 cmpop = Eq | NotEq | Lt | LtE | Gt | GtE | Is | IsNot | In | NotIn
 
-comprehension = (expr target, expr iter, expr* ifs, int is_async)
+comprehension = Comprehension(expr target, expr iter, expr* ifs, int is_async)
 
 excepthandler = ExceptHandler(expr? type, identifier? name, stmt* body)
                 attributes (int lineno, int col_offset)
 
-arguments = (arg* args, arg? vararg, arg* kwonlyargs, expr* kw_defaults,
-             arg? kwarg, expr* defaults)
+arguments = Arguments(arg* args, arg? vararg, arg* kwonlyargs,
+                      expr* kw_defaults, arg? kwarg, expr* defaults)
 
 -- Change #2: Attribute section in product type presented in Python grammar
 -- does not actually exist in Zephyr ASDL specification since they could
 -- be combined with the actual product.
-arg = (identifier arg, expr? annotation, int lineno, int col_offset)
+arg = Arg(identifier arg, expr? annotation, int lineno, int col_offset)
 
 -- keyword arguments supplied to call (NULL identifier for **kwargs)
-keyword = (identifier? arg, expr value)
+keyword = Keyword(identifier? arg, expr value)
 
 -- import name with optional 'as' alias.
-alias = (identifier name, identifier? asname)
+alias = Alias(identifier name, identifier? asname)
 
-withitem = (expr context_expr, expr? optional_vars)
+withitem = WithItem(expr context_expr, expr? optional_vars)
