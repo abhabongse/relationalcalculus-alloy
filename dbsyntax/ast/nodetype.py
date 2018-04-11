@@ -75,7 +75,8 @@ def makeast(name, spec, builtins):
         for con_id, fields in cons.items():
             # Constructor ID should be string of valid format
             if not isinstance(con_id, str):
-                raise TypeError(f'expected string constructor identifier: {con_id!r}')
+                raise TypeError(f'expected string constructor identifier: '
+                                f'{con_id!r}')
             if not isconstructorid(con_id):
                 raise ValueError(f'invalid constructor identifier: {con_id!r}')
 
@@ -92,7 +93,8 @@ def makeast(name, spec, builtins):
             seen_attr_names = set()
             for field_type_id, modifier, attr_name in combined_fields:
                 if field_type_id not in type_ids:
-                    raise ValueError(f'unknown type identifier: {field_type_id!r}')
+                    raise ValueError(f'unknown type identifier: '
+                                     f'{field_type_id!r}')
                 if modifier not in ('*', '?', ''):
                     raise ValueError(f'invalid modifier: {modifier!r}')
                 if attr_name and attr_name in seen_attr_names:
