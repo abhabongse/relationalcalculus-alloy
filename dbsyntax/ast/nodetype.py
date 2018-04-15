@@ -16,15 +16,15 @@ from .helpers import (
 ## Main AST implementation ##
 #############################
 
-def makeast(name, spec, builtins):
-    """Converts a new language specification into a collection of node
-    types (constructors for AST node subclasses) based on a given input
-    language specification in ASDL style (sans product type).
+def make_ast(name, spec, builtins):
+    """Converts an input which is a new language specification in ASDL
+    style (excluding product type) into a collection of node types
+    (i.e. constructors for AST node subclasses).
 
     Arguments:
         name (str): Name of new language, which will also be the common
-            class name from which each node type is inherited.
-        spec (dict): Entire ASDL specification of a new language, specifically:
+            class name from which each node type is inherited
+        spec (dict): Entire ASDL specification of a new language:
             <spec> ::= Dict[<type_id: str> → <type>, ...]
             <type> ::= Tuple[<constructors>, <attributes>]
             <constructors> ::= Dict[<constructor_id: str> → <fields>, ...]
@@ -37,6 +37,7 @@ def makeast(name, spec, builtins):
     Returns:
         Mapping from constructor IDs to newly created constructors.
     """
+
     # Specification should be a dictionary
     if not isinstance(spec, dict):
         raise TypeError(f'expected a dict for spec: {spec!r}')
