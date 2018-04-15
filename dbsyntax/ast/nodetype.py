@@ -6,11 +6,10 @@ There are two possible approaches:
 
 This package implements a combination of both approaches.
 """
-from .helpers import (
-    isalphaidentifier,
-    isupperidentifier as isconstructorid,
-    isloweridentifier as istypeid,
-    )
+from itertools import chain
+from collections.abc import Sequence, Mapping
+
+from .helpers import is_alpha_id, is_upper_id, is_lower_id
 
 #############################
 ## Main AST implementation ##
@@ -37,75 +36,92 @@ def make_ast(name, spec, builtins):
     Returns:
         Mapping from constructor IDs to newly created constructors.
     """
+    _verify_spec(spec, builtins)
 
-    # Specification should be a dictionary
-    if not isinstance(spec, dict):
-        raise TypeError(f'expected a dict for spec: {spec!r}')
+    # Create a new namespace and initialize with base node type
+    namespace = {}
+    _make_base_constructor(name, namespace)
+
+    # Create each constructor in namespace
+    for constructors, attrs in spec.values():
+        for constructor_id, fields in constructors.items():
+            combined_fields = list(fields) + list(attrs)
+            _make_constructor(constructor_id, combined_fields, namespace)
+
+    return namespace
+
+############################
+## Specification checking ##
+############################
+
+def _verify_spec(spec, builtins):
+    # Specification must be a dictionary
+    if not isinstance(spec, Mapping):
+        raise TypeError(f'expected a mapping for spec: {spec!r}')
 
     # Type IDs should be strings of valid format
-    for type_id in spec.keys():
+    for type_id in chain(spec.keys(), builtins.keys()):
         if not isinstance(type_id, str):
-            raise TypeError(f'expected string type identifier: {type_id!r}')
-        if not istypeid(type_id):
-            raise ValueError(f'invalid type identifier: {type_id!r}')
+            raise TypeError(f'type identifier must be string: {type_id!r}')
+        if not is_lower_id(type_id):
+            raise ValueError(f'wrong format for type identifier: {type_id!r}')
 
     # Type IDs in spec must not overlap with builtin types
     spec_type_ids = set(spec.keys())
     builtin_type_ids = set(builtins.keys())
+    type_ids = spec_type_ids | builtin_type_ids
     if spec_type_ids & builtin_type_ids:
         raise ValueError(f'overlapped type IDs between spec and builtins')
 
-    # All type IDs
-    type_ids = set(spec.keys()) | set(builtins.keys())
-
-    # Make base constructor from language name
-    namespace = {}
-    _make_base_constructor(name, namespace)
-
     # Build each constructor from spec
-    for type_id, (cons, attrs) in spec.items():
+    seen_constructor_ids = set()
+    for constructors, attrs in spec.values():
 
-        # Constructors must be a dict
-        if not isinstance(cons, dict):
-            raise TypeError(f'expected a dict for constructors: {cons!r}')
+        # Constructors must be a dictionary
+        if not isinstance(constructors, Mapping):
+            raise TypeError('expected a mapping for constructors: '
+                            f'{constructors!r}')
 
-        # Attributes must be a list
-        if not isinstance(attrs, list):
-            raise TypeError(f'expected a list for attributes: {attrs!r}')
+        # Attributes must be a sequence
+        if not isinstance(attrs, Sequence):
+            raise TypeError(f'expected a sequence for attributes: {attrs!r}')
 
-        for con_id, fields in cons.items():
+        for constructor_id, fields in constructors.items():
             # Constructor ID should be string of valid format
-            if not isinstance(con_id, str):
-                raise TypeError(f'expected string constructor identifier: '
-                                f'{con_id!r}')
-            if not isconstructorid(con_id):
-                raise ValueError(f'invalid constructor identifier: {con_id!r}')
+            if not isinstance(constructor_id, str):
+                raise TypeError('constructor identifier must be string: '
+                                f'{constructor_id!r}')
+            if not is_upper_id(constructor_id):
+                raise ValueError('wrong format for constructor identifier: '
+                                 f'{constructor_id!r}')
 
             # Constructor ID must not be a duplicate
-            if con_id in namespace:
-                raise ValueError(f'duplicated constructor: {con_id!r}')
+            if constructor_id in seen_constructor_ids:
+                raise ValueError(f'duplicated constructor: {constructor_id!r}')
+            seen_constructor_ids.add(constructor_id)
 
             # Fields must be a list
-            if not isinstance(fields, list):
-                raise TypeError(f'expected a list for fields: {fields!r}')
+            if not isinstance(fields, Sequence):
+                raise TypeError(f'expected a sequence for fields: {fields!r}')
 
             # Combined fields and attributes must not overlap
-            combined_fields = fields + attrs
+            combined_fields = list(fields) + list(attrs)
             seen_attr_names = set()
-            for field_type_id, modifier, attr_name in combined_fields:
-                if field_type_id not in type_ids:
-                    raise ValueError(f'unknown type identifier: '
-                                     f'{field_type_id!r}')
+            for type_id, modifier, attr_name in combined_fields:
+                if type_id not in type_ids:
+                    raise ValueError(f'unknown type identifier: {type_id!r}')
                 if modifier not in ('*', '?', ''):
                     raise ValueError(f'invalid modifier: {modifier!r}')
+                if not isinstance(attr_name, str):
+                    raise TypeError('attribute name must be string: '
+                                    f'{attr_name!r}')
+                if attr_name and not is_alpha_id(attr_name):
+                    raise ValueError('wrong format for attribute name: '
+                                     f'{attr_name!r}')
                 if attr_name and attr_name in seen_attr_names:
-                    raise ValueError(f'duplicated attribute: {attr_name}')
+                    raise ValueError('duplicated attribute names: '
+                                     f'{attr_name!r}')
                 seen_attr_names.add(attr_name)
-
-            # Finally make a constructor
-            _make_constructor(con_id, combined_fields, namespace)
-
-    return namespace
 
 ###############################
 ## Helper AST implementation ##
@@ -113,13 +129,16 @@ def make_ast(name, spec, builtins):
 
 def _make_base_constructor(name, namespace):
     # TODO: implement this
+    return
     raise NotImplementedError
 
-def _make_constructor(con_id, fields, namespace):
+def _make_constructor(constructor_id, fields, namespace):
     # TODO: implement this
+    namespace[constructor_id] = fields
+    return
     raise NotImplementedError
 
-# nodetype.makeast(
+# nodetype.make_ast(
 #     'NewLanguage',
 #     {'expr': ({'Number': [('int', '', 'num')],
 #                'BinaryOp': [('expr', '', 'left'), ('expr', '', 'right')],
