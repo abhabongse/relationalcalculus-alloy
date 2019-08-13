@@ -4,12 +4,9 @@ verify_ssl = true
 url = "https://pypi.org/simple"
 
 [requires]
-python_version = "3.6"
-
-[scripts]
-cleanup = "bash -c 'rm -rf $(find . -type d -name .ropeproject) $(find . -type d -name .ipynb_checkpoints) $(find . -type d -name __pycache__)'"
+python_version = "3.7"
 
 [packages]
-pyparsing = ">=2.2.0"
+lark-parser = "~=0.7.2"
 
 [dev-packages]
