@@ -13,10 +13,9 @@ tuple_expr: FIELD_NAME ("," FIELD_NAME)* ","?
 ?and_test: not_test (_AND_OP not_test)*
 ?not_test: _NOT_OP atom_test  -> not
          | atom_test
-?atom_test: "(" or_test ")"
+?atom_test: "(" iff_test ")"
           | table 
-          | FIELD_NAME "==" FIELD_NAME  -> equal
-          | FIELD_NAME "!=" FIELD_NAME  -> not_equal
+          | FIELD_NAME COMP_OP FIELD_NAME  -> compare_op
           | _FOR_ALL_OP "[" FIELD_NAME "]" "(" or_test ")"  -> for_all
           | _THERE_EXISTS_OP "[" FIELD_NAME "]" "(" or_test ")" -> there_exists
          
@@ -31,6 +30,8 @@ _AND_OP: "∧" | "&" | "AND"
 _NOT_OP: "~" | "¬" | "NOT"
 _FOR_ALL_OP: "∀" | "ALL"
 _THERE_EXISTS_OP: "∃" | "EXISTS"
+
+COMP_OP: "==" | "!=" | ">=" | ">" | "<=" | "<"
 
 %import common.WS
 %ignore WS
