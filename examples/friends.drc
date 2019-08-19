@@ -1,15 +1,6 @@
-tables {
-    Friends(a, b)
-}
-queries {
-    $friend_of_friends = {x, y: EXISTS[z](
-        (Friends(x, z) OR Friends(z, x))
-        AND (Friends(y, z) OR Friends(z, y))
-    )}
-    $lone_pair = {x, y: ALL[z](
-        (Friend(x, z) => y == z)
-        AND (Friend(z, x) => y == z)
-        AND (Friend(y, z) => x == z)
-        AND (Friend(z, y) => x == z)
-    )}
-}
+Friends(a, b);
+
+{x, y: EXISTS[z](
+    (Friends(x, z) OR Friends(z, x))
+    AND (Friends(y, z) OR Friends(z, y))
+)}
