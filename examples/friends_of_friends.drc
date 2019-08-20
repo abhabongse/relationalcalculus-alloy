@@ -1,0 +1,8 @@
+Friends(a, b);
+
+{x, y:
+    EXISTS[z](
+        (Friends(x, z) OR Friends(z, x))
+        AND (Friends(y, z) OR Friends(z, y))
+    )
+}

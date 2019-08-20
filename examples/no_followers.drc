@@ -1,0 +1,5 @@
+Follows(a, b);
+
+{x: EXISTS[y](Follows(x, y))
+    AND NOT EXISTS[y](Follows(y, x))
+}

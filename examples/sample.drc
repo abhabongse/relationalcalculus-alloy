@@ -1,0 +1,7 @@
+Friends(a, b);
+
+{x: ALL[y](
+        Friends(x, y) =>
+        EXISTS[z](Friends(y, z))
+    )
+}
