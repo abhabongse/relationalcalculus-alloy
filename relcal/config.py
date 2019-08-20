@@ -1,3 +1,3 @@
 import os
 
-DEBUG_MODE = bool(int(os.getenv("DEBUG_MODE", "0")))
+DEBUG_MODE = bool(os.getenv("DEBUG_MODE", ""))

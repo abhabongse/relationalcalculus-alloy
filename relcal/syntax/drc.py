@@ -1,161 +1,112 @@
 """
 Lark parser and AST definition for Domain Relational Calculus.
 """
-import pprint
 from typing import Dict, List, NamedTuple, Tuple, Union
 
-from lark import Lark, Token, Tree, Transformer, Visitor, v_args
+from lark import Lark, Token, Tree
 
-drc_parser = Lark('''
-start: table_defs query
-table_defs: (table ";")*
-table: TABLE_NAME "(" fields? ")"
-fields: FIELD_NAME ("," FIELD_NAME)* ","?
-query: "{" fields ":" iff_test "}"
-
-?iff_test: implies_test (_IFF_OP implies_test)?
-?implies_test: or_test (_IMPLIES_OP or_test)?
-?or_test: and_test (_OR_OP and_test)*
-?and_test: not_test (_AND_OP not_test)*
-?not_test: _NOT_OP atom_test  -> not
-         | atom_test
-?atom_test: "(" iff_test ")"
-          | table 
-          | FIELD_NAME COMP_OP FIELD_NAME  -> compare_op
-          | _FOR_ALL_OP "[" FIELD_NAME "]" "(" iff_test ")"  -> for_all
-          | _THERE_EXISTS_OP "[" FIELD_NAME "]" "(" iff_test ")" -> there_exists
-         
-TABLE_NAME: /[A-Z][A-Za-z0-9_]*/
-FIELD_NAME: /[a-z][A-Za-z0-9_]*/
-QUERY_IDENTIFIER: /\$[A-Za-z0-9_]+/
-
-_IFF_OP.10: "<=>" | "⇔" | "↔" | "IFF"
-_IMPLIES_OP.10: "=>" | "⇒" | "→" | "IMPLIES"
-_OR_OP.10: "∨" | "|" | "OR"
-_AND_OP.10: "∧" | "&" | "AND"
-_NOT_OP.10: "~" | "¬" | "NOT"
-_FOR_ALL_OP.10: "∀" | "ALL"
-_THERE_EXISTS_OP.10: "∃" | "EXISTS"
-
-COMP_OP: "==" | "!=" | ">=" | ">" | "<=" | "<"
-
-%import common.WS
-%ignore WS
-''', parser="lalr", debug=True)
+from relcal.config import DEBUG_MODE
+from relcal.helpers.primitives import Singleton
 
 ####################
 # Type definitions #
 ####################
 
-Fields = Tuple[str, ...]
+Fields = Tuple[Token, ...]
 
 
 class Table(NamedTuple):
-    name: str
+    name: Token
     fields: Fields
 
 
-class Query(NamedTuple):
-    tuple_vars: Fields
-    predicate: Tree
+########################
+# Language definitions #
+########################
 
-
-class DRCExtractedData(NamedTuple):
-    table_defs: Dict[str, Fields]
-    query: Query
-
-
-class Operation(NamedTuple):
-    op_name: str
-    args: Tuple[Union['Operation', str], ...]
-
-
-#######################################
-# Lark tree visitors and transformers #
-#######################################
-
-# TODO: Lark tree visitors and transformers are not flexible enough
-#       Just transform them from scratch.
-
-class ValidateShadowingVisitor(Visitor):
+class DRCQueryLanguage(metaclass=Singleton):
     """
-    Parsed tree visitor to validate that no variable shadowing exists.
+    A collection of methods for domain relational calculus query language.
+    The actual Lark parser is stored within 'parser' class attribute.
     """
+    parser = Lark('''
+        start: table_defs query
+        table_defs: (table ";")*
+        table: TABLE_NAME "(" fields? ")"
+        fields: FIELD_NAME ("," FIELD_NAME)* ","?
+        query: "{" fields ":" iff_test "}"
+    
+        ?iff_test: implies_test (_IFF_OP implies_test)?
+        ?implies_test: or_test (_IMPLIES_OP or_test)?
+        ?or_test: and_test (_OR_OP and_test)*
+        ?and_test: not_test (_AND_OP not_test)*
+        ?not_test: _NOT_OP atom_test  -> not
+                 | atom_test
+        ?atom_test: "(" iff_test ")"
+                  | table 
+                  | FIELD_NAME COMP_OP FIELD_NAME  -> compare_op
+                  | _FOR_ALL_OP "[" FIELD_NAME "]" "(" iff_test ")"  -> for_all
+                  | _THERE_EXISTS_OP "[" FIELD_NAME "]" "(" iff_test ")" -> there_exists
+    
+        TABLE_NAME: /[A-Z][A-Za-z0-9_]*/
+        FIELD_NAME: /[a-z][A-Za-z0-9_]*/
+        QUERY_IDENTIFIER: /\$[A-Za-z0-9_]+/
+    
+        _IFF_OP.10: "<=>" | "⇔" | "↔" | "IFF"
+        _IMPLIES_OP.10: "=>" | "⇒" | "→" | "IMPLIES"
+        _OR_OP.10: "∨" | "|" | "OR"
+        _AND_OP.10: "∧" | "&" | "AND"
+        _NOT_OP.10: "~" | "¬" | "NOT"
+        _FOR_ALL_OP.10: "∀" | "ALL"
+        _THERE_EXISTS_OP.10: "∃" | "EXISTS"
+    
+        COMP_OP: "==" | "!=" | ">=" | ">" | "<=" | "<"
+    
+        %import common.WS
+        %ignore WS
+    ''', parser="lalr", debug=DEBUG_MODE)
 
-    @staticmethod
-    def validate(variable: Token, tree: Tree):
-        for node in tree.iter_subtrees():
-            if node.data not in ('for_all', 'there_exists'):
-                continue
-            token = node.children[0]
-            if token == variable:
-                raise SyntaxError(f"variable {str(token)!r} overshadowed "
-                                  f"at line {token.line} column {token.column}")
+    def visit(self, node: Tree):
+        """
+        Recursively transforms a given node from the Lark parsed tree.
+        Specifically, the method 'visit_nodetype' will be invoked with such node
+        where 'nodetype' is the type of the node represented by 'node.data'.
+        Otherwise, an AttributeError is raised.
+        """
+        visitor = getattr(self, f"visit_{node.data}")
+        return visitor(node)
 
-    def query(self, tree: Tree):
+    def visit_start(self, node: Tree):
+        table_defs_node, query_node = node.children
+        table_defs = self.extract_table_defs(table_defs_node)
+        return table_defs
+
+    def extract_table_defs(self, table_defs_node: Tree) -> Dict[Token, Fields]:
+        table_defs = {}
+        for table_node in table_defs_node.children:
+            name, fields = self.extract_table_def(table_node)
+            # Check that all table names are unique
+            if name in table_defs:
+                raise SyntaxError(
+                    f"duplicated table name {str(name)!r} "
+                    f"at line {name.line} column {name.column}",
+                )
+            table_defs[name] = fields
+        return table_defs
+
+    def extract_table_def(self, table_def_node: Tree) -> Table:
+        table_name: Token
         fields: Tree
-        predicate: Tree
-        fields, predicate = tree.children
-        for variable in fields.children:
-            self.validate(variable, predicate)
+        table_name, fields = table_def_node.children
 
-    def for_all(self, tree: Tree) -> Tree:
-        bound_variable: Token
-        predicate: Tree
-        bound_variable, predicate = tree.children
-        self.validate(bound_variable, predicate)
+        # Check that all field names are unique
+        collected = set()
+        for field_name in fields.children:
+            if field_name in collected:
+                raise SyntaxError(
+                    f"duplicated field name {str(field_name)!r} "
+                    f"at line {field_name.line} column {field_name.column}",
+                )
+            collected.add(field_name)
 
-    def there_exists(self, tree: Tree) -> Tree:
-        bound_variable: Token
-        predicate: Tree
-        bound_variable, predicate = tree.children
-        self.validate(bound_variable, predicate)
-
-
-class DRCExtractionTransformer(Transformer):
-    """
-    Parsed tree transformer to obtain all table definitions
-    from the source data in DRC syntax grammar.
-    """
-
-    @v_args(inline=True)
-    def start(self, table_defs: Dict[str, Fields], query: Query) -> DRCExtractedData:
-        return DRCExtractedData(table_defs, query)
-
-    def table_defs(self, tables: List[Table]) -> Dict[str, Fields]:
-        return dict(tables)
-
-    @v_args(inline=True)
-    def table(self, table_name: Token, fields: Fields) -> Table:
-        return Table(str(table_name), fields)
-
-    def fields(self, field_names: List[Token]) -> Fields:
-        return tuple(str(name) for name in field_names)
-
-    @v_args(inline=True)
-    def query(self, tuple_vars: Fields, predicate: Tree) -> Query:
-        return Query(tuple_vars, predicate)
-
-
-validate_shadowing_visitor = ValidateShadowingVisitor()
-drc_extraction_transformer = DRCExtractionTransformer()
-
-
-##################
-# Main functions #
-##################
-
-def extract_tree_data(tree: Tree):
-    """
-    Obtain the table definitions from DRC syntax tree
-    as a dictionary mapping from table names to tuple of field names.
-    """
-    validate_shadowing_visitor.visit(tree)
-
-    table_defs: Dict[str, Fields]
-    query: Query
-    table_defs, query = drc_extraction_transformer.transform(tree)
-
-    pprint.pprint(table_defs)
-    pprint.pprint(query.tuple_vars)
-    print(query.predicate.pretty())
+        return Table(table_name, tuple(fields.children))
