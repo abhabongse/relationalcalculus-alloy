@@ -14,7 +14,7 @@ def test_all_followers_follow_someone__valid():
     }
     '''
     lang = DRCQueryLanguage()
-    result = lang.visit(lang.parser.parse(content))
+    result = lang.transform(lang.parser.parse(content))
 
 
 def test_all_followers_follow_someone__duplicated_field_name():
@@ -29,7 +29,7 @@ def test_all_followers_follow_someone__duplicated_field_name():
     '''
     lang = DRCQueryLanguage()
     with pytest.raises(SyntaxError, match=r"duplicated field name"):
-        lang.visit(lang.parser.parse(content))
+        lang.transform(lang.parser.parse(content))
 
 
 def test_all_followers_follow_someone__duplicated_table_name():
@@ -45,4 +45,30 @@ def test_all_followers_follow_someone__duplicated_table_name():
     '''
     lang = DRCQueryLanguage()
     with pytest.raises(SyntaxError, match=r"duplicated table name"):
-        lang.visit(lang.parser.parse(content))
+        lang.transform(lang.parser.parse(content))
+
+
+def test_all_followers_follow_someone__tuple_vars_overshadow():
+    fst_content = '''
+    Follows(a, b);
+
+    {x: ALL[y](
+            Friends(x, y) =>
+            EXISTS[x](Friends(y, x))
+        )
+    }
+    '''
+    snd_content = '''
+    Follows(a, b);
+
+    {x: ALL[x](
+            Friends(x, x) =>
+            EXISTS[z](Friends(x, z))
+        )
+    }
+    '''
+    lang = DRCQueryLanguage()
+    with pytest.raises(SyntaxError, match=r"variable name .* overshadowed"):
+        lang.transform(lang.parser.parse(fst_content))
+    with pytest.raises(SyntaxError, match=r"variable name .* overshadowed"):
+        lang.transform(lang.parser.parse(snd_content))
