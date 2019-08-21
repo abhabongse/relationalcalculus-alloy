@@ -1,7 +1,7 @@
 """
 Lark parser and AST definition for Domain Relational Calculus.
 """
-from typing import Dict, List, NamedTuple, Tuple, Union
+from typing import Dict, NamedTuple, Tuple
 
 from lark import Lark, Token, Tree
 
@@ -45,7 +45,7 @@ class DRCQueryLanguage(metaclass=Singleton):
         table: TABLE_NAME "(" fields? ")"
         fields: FIELD_NAME ("," FIELD_NAME)* ","?
         query: "{" fields ":" iff_test "}"
-    
+
         ?iff_test: implies_test (_IFF_OP implies_test)?
         ?implies_test: or_test (_IMPLIES_OP or_test)?
         ?or_test: and_test (_OR_OP and_test)*
@@ -53,15 +53,15 @@ class DRCQueryLanguage(metaclass=Singleton):
         ?not_test: _NOT_OP atom_test  -> not
                  | atom_test
         ?atom_test: "(" iff_test ")"
-                  | table 
+                  | table
                   | FIELD_NAME COMP_OP FIELD_NAME  -> compare_op
                   | _FOR_ALL_OP "[" FIELD_NAME "]" "(" iff_test ")"  -> for_all
                   | _THERE_EXISTS_OP "[" FIELD_NAME "]" "(" iff_test ")" -> there_exists
-    
+
         TABLE_NAME: /[A-Z][A-Za-z0-9_]*/
         FIELD_NAME: /[a-z][A-Za-z0-9_]*/
         QUERY_IDENTIFIER: /\$[A-Za-z0-9_]+/
-    
+
         _IFF_OP.10: "<=>" | "⇔" | "↔" | "IFF"
         _IMPLIES_OP.10: "=>" | "⇒" | "→" | "IMPLIES"
         _OR_OP.10: "∨" | "|" | "OR"
@@ -69,9 +69,9 @@ class DRCQueryLanguage(metaclass=Singleton):
         _NOT_OP.10: "~" | "¬" | "NOT"
         _FOR_ALL_OP.10: "∀" | "ALL"
         _THERE_EXISTS_OP.10: "∃" | "EXISTS"
-    
+
         COMP_OP: "==" | "!=" | ">=" | ">" | "<=" | "<"
-    
+
         %import common.WS
         %ignore WS
     ''', parser="lalr", debug=config.DEBUG_MODE)

@@ -14,7 +14,8 @@ def test_all_followers_follow_someone__valid():
     }
     '''
     lang = DRCQueryLanguage()
-    result = lang.transform(lang.parser.parse(content))
+    # TODO: use result of transformation for validation
+    lang.transform(lang.parser.parse(content))
 
 
 def test_all_followers_follow_someone__duplicated_field_name():

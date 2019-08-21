@@ -2,12 +2,12 @@ import sys
 
 import click
 
-from relcal.syntax.drc import drc_parser
+from relcal.syntax.drc import DRCQueryLanguage
 
 
 @click.command()
 @click.argument(
-    'input_file', type=click.Path(exists=True, dir_okay=False, allow_dash=True)
+    'input_file', type=click.Path(exists=True, dir_okay=False, allow_dash=True),
 )
 def parse_drc(input_file):
     """
@@ -19,5 +19,5 @@ def parse_drc(input_file):
     else:
         with open(input_file) as fobj:
             content = fobj.read()
-    tree = drc_parser.parse(content)
+    tree = DRCQueryLanguage().parser.parse(content)
     print(tree.pretty())
