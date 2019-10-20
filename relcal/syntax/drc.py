@@ -175,9 +175,13 @@ class DRCQueryLanguage(metaclass=Singleton):
         where 'nodetype' is the type of the node represented by 'node.data'.
         Otherwise, an AttributeError is raised.
         """
-        return object()  # TODO: implement this
-        # visitor = getattr(self, f"visit_{node.data}")
-        # return visitor(node)
+        visitor = getattr(self, f"visit_{node.data}", self.visit_generic)
+        return visitor(node)
+
+    def visit_generic(self, node: Tree):
+        return node
 
     def visit_fields(self, node: Tree):
         return tuple(node.children)
+
+    # TODO: add more visitors
