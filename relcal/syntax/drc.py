@@ -76,25 +76,37 @@ class DRCQueryLanguage(metaclass=Singleton):
         %ignore WS
     ''', parser="lalr", debug=config.DEBUG_MODE)
 
+    def parse(self, text: str) -> Tree:
+        """
+        Use the parser to parse the given domain relational calculus query
+        into parsed tree.
+        """
+        return self.parser.parse(text)
+
     def transform(self, node: Tree) -> DRCParsedObject:
         """
         Transforms the entire parsed tree into the abstract syntax tree.
         The given parsed tree node must be of type 'start'.
         """
-        table_defs_node: Tree
-        query_node: Tree
-        table_defs_node, query_node = node.children
+        assert node.data == 'start' and len(node.children) == 2
+
+        table_defs_node: Tree = node.children[0]
+        query_node: Tree = node.children[1]
+
         table_defs = self.transform_table_defs(table_defs_node)
         query = self.transform_query(query_node)
+
         return DRCParsedObject(table_defs, query)
 
-    def transform_table_defs(self, table_defs_node: Tree) -> Dict[Token, Fields]:
+    def transform_table_defs(self, node: Tree) -> Dict[Token, Fields]:
         """
         Transforms the node with type 'table_defs' into
         a dictionary which maps table name string to field names.
         """
+        assert node.data == 'table_defs'
+
         table_defs = {}
-        for table_node in table_defs_node.children:
+        for table_node in node.children:
             name, fields = self.transform_single_table_def(table_node)
             # Check that all table names are unique
             if name in table_defs:
@@ -105,14 +117,15 @@ class DRCQueryLanguage(metaclass=Singleton):
             table_defs[name] = fields
         return table_defs
 
-    def transform_single_table_def(self, table_def_node: Tree) -> Table:
+    def transform_single_table_def(self, node: Tree) -> Table:
         """
         Transforms the node with type 'table' into
         a tuple of table name strings and field names.
         """
-        table_name: Token
-        fields_node: Tree
-        table_name, fields_node = table_def_node.children
+        assert node.data == 'table' and len(node.children) == 2
+
+        table_name: Token = node.children[0]
+        fields_node: Tree = node.children[1]
 
         # Check that all field names are unique
         collected = set()
@@ -130,11 +143,14 @@ class DRCQueryLanguage(metaclass=Singleton):
         """
         Transforms the node with type 'query' into the Query tuple object.
         """
-        tuple_vars_node: Tree
-        predicate_node: Tree
-        tuple_vars_node, predicate_node = node.children
+        assert node.data == 'query' and len(node.children) == 2
+
+        tuple_vars_node: Tree = node.children[0]
+        predicate_node: Tree = node.children[1]
+
         for variable in tuple_vars_node.children:
             self.validate_shadowing(variable, predicate_node)
+
         return Query(self.visit_fields(tuple_vars_node), self.visit(predicate_node))
 
     def validate_shadowing(self, variable: Token, subtree: Tree):
