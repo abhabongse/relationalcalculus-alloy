@@ -10,6 +10,10 @@ class Singleton(type):
     """
     instance = None
 
+    def __init__(cls, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        cls.__call__()
+
     def __call__(cls):
         if cls.instance is None:
             cls.instance = super().__call__()
