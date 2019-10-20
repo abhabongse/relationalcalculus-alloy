@@ -179,6 +179,9 @@ class DRCQueryLanguage(metaclass=Singleton):
         return visitor(node)
 
     def visit_generic(self, node: Tree):
+        for child_node in node.children:
+            if isinstance(child_node, Tree):
+                self.visit(child_node)
         return node
 
     def visit_fields(self, node: Tree):
