@@ -153,21 +153,6 @@ class DRCQueryLanguage(metaclass=Singleton):
 
         return Query(self.visit_fields(tuple_vars_node), self.visit(predicate_node))
 
-    def validate_shadowing(self, variable: Token, subtree: Tree):
-        """
-        Makes sure that the subtree does not introduce a new variable
-        whose name matches that of the given variable.
-        """
-        for node in subtree.iter_subtrees():
-            if node.data not in ('for_all', 'there_exists'):
-                continue  # skip
-            checking_token, _ = node.children
-            if checking_token == variable:
-                raise SyntaxError(
-                    f"variable name {str(checking_token)!r} overshadowed "
-                    f"at line {checking_token.line} column {checking_token.column}",
-                )
-
     def visit(self, node: Tree):
         """
         Recursively transforms a given node from the Lark parsed tree.
@@ -187,4 +172,30 @@ class DRCQueryLanguage(metaclass=Singleton):
     def visit_fields(self, node: Tree):
         return tuple(node.children)
 
-    # TODO: add more visitors
+    def visit_there_exists(self, node: Tree):
+        return self.visit_quantifier(node)
+
+    def visit_for_all(self, node: Tree):
+        return self.visit_quantifier(node)
+
+    def visit_quantifier(self, node: Tree):
+        variable: Token = node.children[0]
+        expr_node: Tree = node.children[1]
+        self.validate_shadowing(variable, expr_node)
+        return node
+
+    @staticmethod
+    def validate_shadowing(variable: Token, subtree: Tree):
+        """
+        Makes sure that the subtree does not introduce a new variable
+        whose name matches that of the given variable.
+        """
+        for node in subtree.iter_subtrees():
+            if node.data not in ('for_all', 'there_exists'):
+                continue  # skip
+            checking_token, _ = node.children
+            if checking_token == variable:
+                raise SyntaxError(
+                    f"variable name {str(checking_token)!r} overshadowed "
+                    f"at line {checking_token.line} column {checking_token.column}",
+                )
