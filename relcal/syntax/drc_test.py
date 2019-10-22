@@ -100,5 +100,5 @@ def test_tuple_vars_overshadow(content):
     ''', id='w'),
 ])
 def test_free_variable(content):
-    with pytest.raises(SyntaxError, match=r"free variable name .*"):
+    with pytest.raises(SyntaxError, match=r".* is a free variable"):
         lang.transform(lang.parser.parse(content))

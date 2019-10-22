@@ -1,7 +1,7 @@
 """
 Lark parser and AST definition for Domain Relational Calculus.
 """
-from typing import Dict, NamedTuple, Tuple
+from typing import Dict, NamedTuple, Set, Tuple
 
 from lark import Lark, Token, Tree
 
@@ -137,7 +137,7 @@ class DRCQueryLanguage(metaclass=Singleton):
                 )
             collected.add(field_name)
 
-        return Table(table_name, self.visit_fields(fields_node))
+        return Table(table_name, tuple(fields_node.children))
 
     def transform_query(self, node: Tree) -> Query:
         """
@@ -148,54 +148,53 @@ class DRCQueryLanguage(metaclass=Singleton):
         tuple_vars_node: Tree = node.children[0]
         predicate_node: Tree = node.children[1]
 
-        for variable in tuple_vars_node.children:
-            self.validate_shadowing(variable, predicate_node)
+        tuple_vars = tuple(tuple_vars_node.children)
+        self.validate_scope(predicate_node, set(tuple_vars))
 
-        return Query(self.visit_fields(tuple_vars_node), self.visit(predicate_node))
+        return Query(tuple(tuple_vars_node.children), predicate_node)
 
-    def visit(self, node: Tree):
+    def validate_scope(self, node: Tree, scope: Set[str]):
         """
-        Recursively transforms a given node from the Lark parsed tree.
-        Specifically, the method 'visit_nodetype' will be invoked with such node
-        where 'nodetype' is the type of the node represented by 'node.data'.
-        Otherwise, an AttributeError is raised.
+        Recursively checks that
+        1.  There is not variable shadowing of variables from within
+            the given scope under the tree node.
+        2.  There is no free variable not in scope.
         """
-        visitor = getattr(self, f"visit_{node.data}", self.visit_generic)
-        return visitor(node)
-
-    def visit_generic(self, node: Tree):
+        visitor = getattr(self, f"validate_scope_{node.data}", None)
+        if visitor:
+            return visitor(node, scope)
         for child_node in node.children:
             if isinstance(child_node, Tree):
-                self.visit(child_node)
-        return node
+                self.validate_scope(child_node, scope)
+            elif isinstance(child_node, Token) and child_node.type == 'FIELD_NAME':
+                self.validate_free_variable(child_node, scope)
 
-    def visit_fields(self, node: Tree):
-        return tuple(node.children)
+    def validate_scope_there_exists(self, node: Tree, scope: Set[str]):
+        assert node.data == 'there_exists'
+        return self.validate_scope_quantifier(node, scope)
 
-    def visit_there_exists(self, node: Tree):
-        return self.visit_quantifier(node)
+    def validate_scope_for_all(self, node: Tree, scope: Set[str]):
+        assert node.data == 'for_all'
+        return self.validate_scope_quantifier(node, scope)
 
-    def visit_for_all(self, node: Tree):
-        return self.visit_quantifier(node)
+    def validate_scope_quantifier(self, node: Tree, scope: Set[str]):
+        assert len(node.children) == 2
 
-    def visit_quantifier(self, node: Tree):
         variable: Token = node.children[0]
         expr_node: Tree = node.children[1]
-        self.validate_shadowing(variable, expr_node)
-        return node
 
-    @staticmethod
-    def validate_shadowing(variable: Token, subtree: Tree):
-        """
-        Makes sure that the subtree does not introduce a new variable
-        whose name matches that of the given variable.
-        """
-        for node in subtree.iter_subtrees():
-            if node.data not in ('for_all', 'there_exists'):
-                continue  # skip
-            checking_token, _ = node.children
-            if checking_token == variable:
-                raise SyntaxError(
-                    f"variable name {str(checking_token)!r} overshadowed "
-                    f"at line {checking_token.line} column {checking_token.column}",
-                )
+        # Check that new variable is not overshadowed
+        if variable in scope:
+            raise SyntaxError(
+                f"variable name {str(variable)!r} overshadowed "
+                f"at line {variable.line} column {variable.column}",
+            )
+        # Recursively check sub-expression node
+        self.validate_scope(expr_node, scope | {variable})
+
+    def validate_free_variable(self, variable: Token, scope: Set[str]):
+        if variable not in scope:
+            raise SyntaxError(
+                f"variable name {str(variable)!r} is a free variable "
+                f"at line {variable.line} column {variable.column}",
+            )
